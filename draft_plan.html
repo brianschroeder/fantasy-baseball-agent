@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Night War Room — Called Up To The Show</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #06090f;
+    --bg2:       #0b1220;
+    --bg3:       #101828;
+    --border:    #1c2d45;
+    --border2:   #243650;
+    --green:     #39ff7a;
+    --amber:     #ffb930;
+    --red:       #ff4757;
+    --blue:      #3d9fff;
+    --dim:       #4a6080;
+    --text:      #c8daf0;
+    --text-dim:  #5a7898;
+    --text-mute: #2a4060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  }
+
+  /* Grid background */
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.25;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 2px solid var(--green);
+    padding: 22px 0 16px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .header-left {}
+  .team-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px; letter-spacing: 3px;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(57,255,122,0.3);
+    line-height: 1;
+  }
+  .league-info {
+    color: var(--text-dim); font-size: 11px; letter-spacing: 2px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .header-right { text-align: right; }
+  .pick-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px; line-height: 1;
+    color: var(--green);
+    text-shadow: 0 0 30px rgba(57,255,122,0.5);
+  }
+  .pick-label {
+    font-size: 10px; letter-spacing: 3px; color: var(--text-dim);
+    text-transform: uppercase; text-align: right;
+  }
+  .draft-date {
+    font-size: 10px; letter-spacing: 2px; color: var(--amber);
+    margin-top: 2px; text-transform: uppercase;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border2);
+  }
+
+  /* ── TOP ROW: keepers + strategy overview ── */
+  .top-row {
+    display: grid; grid-template-columns: 320px 1fr; gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 18px 20px;
+    position: relative;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--green), transparent);
+  }
+
+  /* ── KEEPERS ── */
+  .keeper-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .keeper-row:last-child { border-bottom: none; }
+  .keeper-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px; font-weight: 700; color: #fff;
+    letter-spacing: 0.5px;
+  }
+  .keeper-pos {
+    font-size: 10px; letter-spacing: 2px; color: var(--text-dim);
+    margin-top: 1px;
+  }
+  .keeper-vbd {
+    text-align: right;
+  }
+  .vbd-val {
+    font-size: 18px; font-weight: 600; color: var(--green);
+  }
+  .vbd-label { font-size: 9px; letter-spacing: 1px; color: var(--text-mute); }
+  .pts-val { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+  .needs-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+    margin-top: 14px;
+  }
+  .need-chip {
+    background: var(--bg3); border: 1px solid var(--border2);
+    padding: 6px 4px; text-align: center;
+    font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    color: var(--text-dim);
+    transition: all 0.2s;
+  }
+  .need-chip.urgent { border-color: var(--red); color: var(--red); }
+  .need-chip.filled { border-color: var(--border); color: var(--text-mute); opacity: 0.4; text-decoration: line-through; }
+
+  /* ── ROUND PLAN ── */
+  .rounds-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .round-card {
+    background: var(--bg2); border: 1px solid var(--border2);
+    padding: 14px; position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .round-card:hover { border-color: var(--green); }
+  .round-card.r1 { border-top: 2px solid var(--green); }
+  .round-card.r2 { border-top: 2px solid var(--amber); }
+  .round-card.r3 { border-top: 2px solid var(--blue); }
+  .round-card.mid { border-top: 2px solid var(--dim); }
+
+  .round-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px; letter-spacing: 3px; color: var(--text-mute);
+    margin-bottom: 6px;
+  }
+  .round-target {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px; font-weight: 700; color: #fff;
+    line-height: 1.2; margin-bottom: 6px;
+  }
+  .round-why {
+    font-size: 10px; color: var(--text-dim); line-height: 1.5;
+  }
+  .round-pick {
+    font-size: 9px; color: var(--text-mute); letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  /* ── PLAYER TABLE ── */
+  .player-section { margin-bottom: 20px; }
+
+  .filter-row {
+    display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-btn {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; padding: 5px 12px;
+    cursor: pointer; text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--green); color: var(--green); }
+  .filter-btn.active { background: var(--green); color: var(--bg); border-color: var(--green); font-weight: 600; }
+
+  .search-box {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; padding: 5px 12px; outline: none;
+    margin-left: auto; width: 200px;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--green); }
+  .search-box::placeholder { color: var(--text-mute); }
+
+  .player-table { width: 100%; border-collapse: collapse; }
+  .player-table th {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-mute); padding: 8px 10px;
+    border-bottom: 1px solid var(--border2);
+    text-align: left; cursor: pointer; user-select: none;
+    white-space: nowrap;
+  }
+  .player-table th:hover { color: var(--green); }
+  .player-table th.num { text-align: right; }
+
+  .player-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--border);
+    font-size: 12px; white-space: nowrap;
+  }
+  .player-table tr:hover td { background: rgba(57,255,122,0.03); }
+  .player-table tr.hidden { display: none; }
+
+  .rank-num { color: var(--text-mute); font-size: 11px; text-align: right; }
+  .p-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px; font-weight: 600; color: #fff; letter-spacing: 0.3px;
+  }
+  .p-team { font-size: 10px; color: var(--text-dim); }
+  .pos-tag {
+    display: inline-block; font-size: 9px; letter-spacing: 1px;
+    padding: 2px 6px; border: 1px solid var(--border2);
+    color: var(--text-dim); font-weight: 600;
+  }
+  .pos-tag.sp { border-color: #3d9fff44; color: var(--blue); }
+  .pos-tag.rp { border-color: #ff477744; color: var(--red); }
+  .pos-tag.of { border-color: #39ff7a44; color: var(--green); }
+  .pos-tag.c  { border-color: #ffb93044; color: var(--amber); }
+  .pos-tag.ss { border-color: #b88cff44; color: #b88cff; }
+  .pos-tag.b2 { border-color: #44cfff44; color: #44cfff; }
+  .pos-tag.b3 { border-color: #ff8c4444; color: #ff8c44; }
+  .pos-tag.b1 { border-color: #4affa044; color: #4affa0; }
+  .pos-tag.dh { border-color: #ff44cc44; color: #ff44cc; }
+
+  .vbd-cell { text-align: right; font-size: 13px; font-weight: 600; }
+  .vbd-high { color: var(--green); }
+  .vbd-med  { color: var(--amber); }
+  .vbd-low  { color: var(--text-dim); }
+  .pts-cell { text-align: right; color: var(--text-dim); font-size: 11px; }
+
+  .tier-divider td {
+    padding: 4px 10px;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-mute); background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* target glow */
+  .target-row td { background: rgba(57,255,122,0.04); }
+  .target-row .p-name { color: var(--green); }
+
+  /* ── BOTTOM ROW ── */
+  .bottom-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+
+  /* scarcity bars */
+  .scarcity-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+  }
+  .scarcity-row:last-child { border-bottom: none; }
+  .scar-pos {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+    width: 32px; color: var(--text); letter-spacing: 1px;
+  }
+  .scar-bar-wrap { flex: 1; height: 6px; background: var(--bg3); position: relative; }
+  .scar-bar {
+    height: 100%; transition: width 0.8s ease;
+  }
+  .scar-high   .scar-bar { background: var(--red); box-shadow: 0 0 8px rgba(255,71,87,0.5); }
+  .scar-medium .scar-bar { background: var(--amber); }
+  .scar-low    .scar-bar { background: var(--green); }
+  .scar-count { font-size: 10px; color: var(--text-dim); width: 60px; text-align: right; }
+  .scar-urgency {
+    font-size: 9px; letter-spacing: 2px; font-weight: 600;
+    width: 55px; text-align: right;
+  }
+  .scar-high   .scar-urgency { color: var(--red); }
+  .scar-medium .scar-urgency { color: var(--amber); }
+  .scar-low    .scar-urgency { color: var(--text-mute); }
+
+  /* scoring cheat sheet */
+  .scoring-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .score-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 8px; background: var(--bg3); border: 1px solid var(--border);
+  }
+  .score-stat { font-size: 11px; color: var(--text-dim); }
+  .score-val {
+    font-size: 13px; font-weight: 600;
+  }
+  .score-val.pos { color: var(--green); }
+  .score-val.big { color: var(--amber); font-size: 15px; }
+  .score-val.neg { color: var(--red); }
+  .score-note {
+    font-size: 9px; color: var(--text-mute); margin-top: 2px;
+    grid-column: 1 / -1; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* key insights */
+  .insight {
+    background: var(--bg3); border-left: 3px solid var(--amber);
+    padding: 10px 14px; margin-bottom: 8px; font-size: 11px;
+    color: var(--text-dim); line-height: 1.6;
+  }
+  .insight strong { color: var(--amber); }
+  .insight.green { border-color: var(--green); }
+  .insight.green strong { color: var(--green); }
+  .insight.red { border-color: var(--red); }
+  .insight.red strong { color: var(--red); }
+
+  /* Tier badges */
+  .tier-badge {
+    display: inline-block; font-size: 8px; letter-spacing: 2px;
+    padding: 1px 5px; margin-left: 6px; vertical-align: middle;
+    font-weight: 700; text-transform: uppercase;
+  }
+  .tier-s { background: var(--green); color: var(--bg); }
+  .tier-a { background: var(--amber); color: var(--bg); }
+  .tier-b { background: var(--blue); color: var(--bg); }
+  .tier-c { background: var(--dim); color: var(--bg); }
+
+  /* fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card, .round-card, .player-section { animation: fadeUp 0.4s ease both; }
+  .round-card:nth-child(1) { animation-delay: 0.05s; }
+  .round-card:nth-child(2) { animation-delay: 0.10s; }
+  .round-card:nth-child(3) { animation-delay: 0.15s; }
+  .round-card:nth-child(4) { animation-delay: 0.20s; }
+  .round-card:nth-child(5) { animation-delay: 0.25s; }
+
+  .live-indicator {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 9px; letter-spacing: 2px; color: var(--green);
+    text-transform: uppercase;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .sort-icon { font-size: 8px; margin-left: 2px; opacity: 0.4; }
+  .sort-icon.active { opacity: 1; color: var(--green); }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="team-name">Called Up To The Show</div>
+      <div class="league-info">Backyard Baseball · Yahoo H2H Points · 10 Teams · Keeper League</div>
+    </div>
+    <div class="header-right">
+      <div class="pick-badge">#4</div>
+      <div class="pick-label">Overall Pick</div>
+      <div class="draft-date">
+        <span class="live-indicator"><span class="live-dot"></span>Draft Night — March 18, 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOP ROW -->
+  <div class="top-row">
+
+    <!-- KEEPERS -->
+    <div>
+      <div class="section-label">My Keepers</div>
+      <div class="card">
+        <div class="keeper-row">
+          <div>
+            <div class="keeper-name">Bryce Harper</div>
+            <div class="keeper-pos">1B · PHI</div>
+          </div>
+          <div class="keeper-vbd">
+            <div class="vbd-val">+60.0</div>
+            <div class="vbd-label">VBD</div>
+            <div class="pts-val">544.5 pts</div>
+          </div>
+        </div>
+        <div class="keeper-row">
+          <div>
+            <div class="keeper-name">Hunter Brown</div>
+            <div class="keeper-pos">SP · HOU</div>
+          </div>
+          <div class="keeper-vbd">
+            <div class="vbd-val">+42.0</div>
+            <div class="vbd-label">VBD</div>
+            <div class="pts-val">328.0 pts</div>
+          </div>
+        </div>
+        <div class="keeper-row">
+          <div>
+            <div class="keeper-name">Zach Neto</div>
+            <div class="keeper-pos">SS · LAA</div>
+          </div>
+          <div class="keeper-vbd">
+            <div class="vbd-val">+38.5</div>
+            <div class="vbd-label">VBD</div>
+            <div class="pts-val">520.0 pts</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <div style="font-size:9px;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:8px;">Positions Still Needed</div>
+          <div class="needs-grid">
+            <div class="need-chip filled">1B</div>
+            <div class="need-chip urgent">C</div>
+            <div class="need-chip">2B</div>
+            <div class="need-chip">3B</div>
+            <div class="need-chip filled">SS</div>
+            <div class="need-chip">OF</div>
+            <div class="need-chip">OF</div>
+            <div class="need-chip">OF</div>
+            <div class="need-chip">Util</div>
+            <div class="need-chip">Util</div>
+            <div class="need-chip">Util</div>
+            <div class="need-chip filled">SP</div>
+            <div class="need-chip">SP</div>
+            <div class="need-chip">RP</div>
+            <div class="need-chip">RP</div>
+            <div class="need-chip">P×4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div>
+      <div class="section-label">Key Insights</div>
+      <div class="insight green">
+        <strong>Ohtani (VBD 476.5) goes 1st, no question.</strong> Picks 2-3 will be Soto + Tucker. At #4 you're choosing between Díaz, Skubal, and Caminero — all elite.
+      </div>
+      <div class="insight">
+        <strong>Saves = $8 pts in this league.</strong> Díaz's 35 projected saves = 280 pts from one stat alone. Elite closers are top-10 overall assets here — don't dismiss them as overrated.
+      </div>
+      <div class="insight">
+        <strong>Skubal's VBD is understated.</strong> QS = +6 pts each and aren't in FanGraphs projections. If he logs 28 QS, add ~168 pts to his projected total. His true value is tier-1.
+      </div>
+      <div class="insight red">
+        <strong>C is HIGH urgency scarcity.</strong> Only 76 quality catchers remain. Contreras (VBD 78.5) is the top option — don't let him escape past round 3.
+      </div>
+      <div class="insight">
+        <strong>Ketel Marte (2B, VBD 88.5)</strong> is the only elite 2B on the board. After him the dropoff is severe. Grab him rounds 4-5 or fill 2B with a Util player.
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND PLAN -->
+  <div class="section-label">Round-by-Round Game Plan</div>
+  <div class="rounds-grid">
+
+    <div class="round-card r1">
+      <div class="round-num">Round 1</div>
+      <div class="round-pick">Pick #4 overall</div>
+      <div class="round-target">Edwin Díaz <span class="tier-badge tier-s">S</span></div>
+      <div class="round-why">SV = +8 pts. 35 saves = 280 pts from one stat. VBD 152 is highest after the top 3. He will not last to R2. If Ohtani somehow falls, take Ohtani instead.</div>
+    </div>
+
+    <div class="round-card r2">
+      <div class="round-num">Round 2</div>
+      <div class="round-pick">Pick ~#17 (snake)</div>
+      <div class="round-target">Skubal or Caminero <span class="tier-badge tier-a">A</span></div>
+      <div class="round-why">If Skubal is there, take him — QS undervaluation means he's truly tier-1. If Skubal gone, Caminero (3B, VBD 134.5) fills a roster hole and is a stud.</div>
+    </div>
+
+    <div class="round-card r3">
+      <div class="round-num">Round 3</div>
+      <div class="round-pick">Pick ~#24</div>
+      <div class="round-target">William Contreras <span class="tier-badge tier-a">A</span></div>
+      <div class="round-why">C scarcity is HIGH. Contreras at VBD 78.5 is the top catcher. Don't wait — only Herrera and Goodman remain after him.</div>
+    </div>
+
+    <div class="round-card r2">
+      <div class="round-num">Rounds 4–5</div>
+      <div class="round-pick">Picks #34, #37</div>
+      <div class="round-target">Marte + Henderson <span class="tier-badge tier-b">B</span></div>
+      <div class="round-why">Ketel Marte (2B, VBD 88.5) is the only elite 2B available. Henderson (SS, VBD 85) slides into Util and has an elite bat. Both should be targeted here.</div>
+    </div>
+
+    <div class="round-card mid">
+      <div class="round-num">Rounds 6–10</div>
+      <div class="round-pick">Picks #44–#74</div>
+      <div class="round-target">OF Depth + SP Arms <span class="tier-badge tier-c">C</span></div>
+      <div class="round-why">Fill 3× OF slots: Chourio, Crow-Armstrong, Langford. SP volume: Logan Webb, Skenes, Cease, Ragans. RP closer if needed: Helsley, Estévez.</div>
+    </div>
+
+  </div>
+
+  <!-- PLAYER BOARD -->
+  <div class="player-section">
+    <div class="section-label">Available Player Board</div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterPos('ALL')">ALL</button>
+      <button class="filter-btn" onclick="filterPos('SP')">SP</button>
+      <button class="filter-btn" onclick="filterPos('RP')">RP</button>
+      <button class="filter-btn" onclick="filterPos('C')">C</button>
+      <button class="filter-btn" onclick="filterPos('1B')">1B</button>
+      <button class="filter-btn" onclick="filterPos('2B')">2B</button>
+      <button class="filter-btn" onclick="filterPos('3B')">3B</button>
+      <button class="filter-btn" onclick="filterPos('SS')">SS</button>
+      <button class="filter-btn" onclick="filterPos('OF')">OF</button>
+      <input class="search-box" type="text" placeholder="Search player..." oninput="searchPlayers(this.value)">
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="player-table" id="playerTable">
+        <thead>
+          <tr>
+            <th class="num" onclick="sortTable('rank')"># <span class="sort-icon active" id="sort-rank">▼</span></th>
+            <th onclick="sortTable('name')">Player <span class="sort-icon" id="sort-name">↕</span></th>
+            <th>Pos</th>
+            <th>Team</th>
+            <th class="num" onclick="sortTable('vbd')">VBD <span class="sort-icon" id="sort-vbd">↕</span></th>
+            <th class="num" onclick="sortTable('pts')">Proj Pts <span class="sort-icon" id="sort-pts">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="playerBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-row">
+
+    <!-- SCARCITY -->
+    <div>
+      <div class="section-label">Positional Scarcity</div>
+      <div class="card">
+        <div class="scarcity-row scar-high">
+          <div class="scar-pos">SS</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:15%"></div></div>
+          <div class="scar-count">74 left</div>
+          <div class="scar-urgency">HIGH</div>
+        </div>
+        <div class="scarcity-row scar-high">
+          <div class="scar-pos">C</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:15%"></div></div>
+          <div class="scar-count">76 left</div>
+          <div class="scar-urgency">HIGH</div>
+        </div>
+        <div class="scarcity-row scar-high">
+          <div class="scar-pos">1B</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:16%"></div></div>
+          <div class="scar-count">79 left</div>
+          <div class="scar-urgency">HIGH</div>
+        </div>
+        <div class="scarcity-row scar-medium">
+          <div class="scar-pos">3B</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:28%"></div></div>
+          <div class="scar-count">93 left</div>
+          <div class="scar-urgency">MED</div>
+        </div>
+        <div class="scarcity-row scar-medium">
+          <div class="scar-pos">2B</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:32%"></div></div>
+          <div class="scar-count">106 left</div>
+          <div class="scar-urgency">MED</div>
+        </div>
+        <div class="scarcity-row scar-medium">
+          <div class="scar-pos">OF</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:65%"></div></div>
+          <div class="scar-count">218 left</div>
+          <div class="scar-urgency">MED</div>
+        </div>
+        <div class="scarcity-row scar-medium">
+          <div class="scar-pos">SP</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:80%"></div></div>
+          <div class="scar-count">317 left</div>
+          <div class="scar-urgency">MED</div>
+        </div>
+        <div class="scarcity-row scar-low">
+          <div class="scar-pos">RP</div>
+          <div class="scar-bar-wrap"><div class="scar-bar" style="width:100%"></div></div>
+          <div class="scar-count">497 left</div>
+          <div class="scar-urgency">LOW</div>
+        </div>
+        <div style="margin-top:12px;font-size:10px;color:var(--text-mute);letter-spacing:1px;text-transform:uppercase;">
+          Note: SS + 1B covered by keepers (Neto, Harper)
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORING CHEAT SHEET -->
+    <div>
+      <div class="section-label">Scoring Cheat Sheet</div>
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-size:9px;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:8px;">Batting</div>
+            <div class="scoring-grid">
+              <div class="score-item"><span class="score-stat">HR</span><span class="score-val big">+4.0</span></div>
+              <div class="score-item"><span class="score-stat">RBI</span><span class="score-val pos">+1.5</span></div>
+              <div class="score-item"><span class="score-stat">R</span><span class="score-val pos">+1.0</span></div>
+              <div class="score-item"><span class="score-stat">BB</span><span class="score-val pos">+1.0</span></div>
+              <div class="score-item"><span class="score-stat">1B</span><span class="score-val pos">+1.0</span></div>
+              <div class="score-item"><span class="score-stat">2B</span><span class="score-val pos">+2.0</span></div>
+              <div class="score-item"><span class="score-stat">3B</span><span class="score-val pos">+3.0</span></div>
+              <div class="score-item"><span class="score-stat">SB</span><span class="score-val pos">+1.5</span></div>
+              <div class="score-item"><span class="score-stat">K</span><span class="score-val neg">-0.5</span></div>
+              <div class="score-item"><span class="score-stat">HBP</span><span class="score-val pos">+1.0</span></div>
+            </div>
+            <div style="margin-top:8px;font-size:9px;color:var(--text-mute);letter-spacing:1px;">
+              HR effectively worth ~6.5–7 pts (R+RBI chain)
+            </div>
+          </div>
+          <div>
+            <div style="font-size:9px;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase;margin-bottom:8px;">Pitching</div>
+            <div class="scoring-grid">
+              <div class="score-item"><span class="score-stat">SV</span><span class="score-val big">+8.0</span></div>
+              <div class="score-item"><span class="score-stat">W</span><span class="score-val big">+6.0</span></div>
+              <div class="score-item"><span class="score-stat">QS</span><span class="score-val big">+6.0</span></div>
+              <div class="score-item"><span class="score-stat">HLD</span><span class="score-val pos">+4.0</span></div>
+              <div class="score-item"><span class="score-stat">K</span><span class="score-val pos">+1.0</span></div>
+              <div class="score-item"><span class="score-stat">IP</span><span class="score-val pos">+1.0</span></div>
+              <div class="score-item"><span class="score-stat">ER</span><span class="score-val neg">-1.0</span></div>
+              <div class="score-item"><span class="score-stat">L</span><span class="score-val neg">-4.0</span></div>
+              <div class="score-item"><span class="score-stat">BB</span><span class="score-val neg">-0.5</span></div>
+              <div class="score-item"><span class="score-stat">BSV</span><span class="score-val neg">-2.0</span></div>
+            </div>
+            <div style="margin-top:8px;font-size:9px;color:var(--text-mute);letter-spacing:1px;">
+              SV = most valuable single pitching event
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const players = [
+  { rank:1,  name:"Shohei Ohtani",         team:"LAD", pos:"DH,OF", pts:924.5, vbd:476.5, target:true  },
+  { rank:2,  name:"Juan Soto",             team:"NYM", pos:"OF",    pts:662.5, vbd:214.5, target:true  },
+  { rank:3,  name:"Kyle Tucker",           team:"LAD", pos:"OF",    pts:606.0, vbd:158.0, target:true  },
+  { rank:4,  name:"Edwin Díaz",            team:"LAD", pos:"RP",    pts:447.5, vbd:152.0, target:true  },
+  { rank:5,  name:"Tarik Skubal",          team:"DET", pos:"SP",    pts:422.0, vbd:136.0, target:true  },
+  { rank:6,  name:"Junior Caminero",       team:"TBR", pos:"3B",    pts:573.0, vbd:134.5, target:true  },
+  { rank:7,  name:"Fernando Tatis Jr.",    team:"SDP", pos:"OF",    pts:572.0, vbd:124.0 },
+  { rank:8,  name:"Corbin Carroll",        team:"ARI", pos:"OF",    pts:570.0, vbd:122.0 },
+  { rank:9,  name:"Julio Rodríguez",       team:"SEA", pos:"OF",    pts:567.0, vbd:119.0 },
+  { rank:10, name:"Cade Smith",            team:"CLE", pos:"RP",    pts:404.0, vbd:108.5 },
+  { rank:11, name:"David Bednar",          team:"NYY", pos:"RP",    pts:398.0, vbd:102.5 },
+  { rank:12, name:"Jhoan Duran",           team:"PHI", pos:"RP",    pts:396.0, vbd:100.5 },
+  { rank:13, name:"Devin Williams",        team:"NYM", pos:"RP",    pts:395.5, vbd:100.0 },
+  { rank:14, name:"Aroldis Chapman",       team:"BOS", pos:"RP",    pts:390.0, vbd:94.5  },
+  { rank:15, name:"Ketel Marte",           team:"ARI", pos:"2B",    pts:527.0, vbd:88.5, target:true  },
+  { rank:16, name:"Paul Skenes",           team:"PIT", pos:"SP",    pts:373.5, vbd:87.5  },
+  { rank:17, name:"Gunnar Henderson",      team:"BAL", pos:"SS",    pts:566.5, vbd:85.0, target:true  },
+  { rank:18, name:"Daniel Palencia",       team:"CHC", pos:"RP",    pts:375.0, vbd:79.5  },
+  { rank:19, name:"Josh Hader",            team:"HOU", pos:"RP",    pts:374.5, vbd:79.0  },
+  { rank:20, name:"William Contreras",     team:"MIL", pos:"C",     pts:455.5, vbd:78.5, target:true  },
+  { rank:21, name:"Jackson Chourio",       team:"MIL", pos:"OF",    pts:520.5, vbd:72.5  },
+  { rank:22, name:"Andrés Muñoz",          team:"SEA", pos:"RP",    pts:365.5, vbd:70.0  },
+  { rank:23, name:"Elly De La Cruz",       team:"CIN", pos:"SS",    pts:550.5, vbd:69.0  },
+  { rank:24, name:"Ryan Walker",           team:"SFG", pos:"RP",    pts:364.0, vbd:68.5  },
+  { rank:25, name:"Iván Herrera",          team:"STL", pos:"C",     pts:444.0, vbd:67.0  },
+  { rank:26, name:"Pete Crow-Armstrong",   team:"CHC", pos:"OF",    pts:511.5, vbd:63.5  },
+  { rank:27, name:"Hunter Goodman",        team:"COL", pos:"C",     pts:440.0, vbd:63.0  },
+  { rank:28, name:"Logan Webb",            team:"SFG", pos:"SP",    pts:346.5, vbd:60.5  },
+  { rank:29, name:"Alex Bregman",          team:"CHC", pos:"3B",    pts:495.5, vbd:57.0  },
+  { rank:30, name:"Wyatt Langford",        team:"TEX", pos:"OF",    pts:503.5, vbd:55.5  },
+  { rank:31, name:"Drake Baldwin",         team:"ATL", pos:"C",     pts:430.0, vbd:53.0  },
+  { rank:32, name:"Ben Rice",              team:"NYY", pos:"C,1B",  pts:429.0, vbd:52.0  },
+  { rank:33, name:"Salvador Perez",        team:"KCR", pos:"C,1B",  pts:429.0, vbd:52.0  },
+  { rank:34, name:"Matt Chapman",          team:"SFG", pos:"3B",    pts:488.0, vbd:49.5  },
+  { rank:35, name:"Austin Riley",          team:"ATL", pos:"3B",    pts:488.0, vbd:49.5  },
+  { rank:36, name:"Carlos Estévez",        team:"KCR", pos:"RP",    pts:345.0, vbd:49.5  },
+  { rank:37, name:"Raisel Iglesias",       team:"ATL", pos:"RP",    pts:344.0, vbd:48.5  },
+  { rank:38, name:"Bryan Woo",             team:"SEA", pos:"SP",    pts:333.5, vbd:47.5  },
+  { rank:39, name:"Chris Sale",            team:"ATL", pos:"SP",    pts:333.0, vbd:47.0  },
+  { rank:40, name:"Jeff Hoffman",          team:"TOR", pos:"RP",    pts:341.5, vbd:46.0  },
+  { rank:41, name:"Maikel Garcia",         team:"KCR", pos:"2B,3B,SS,OF", pts:483.0, vbd:44.5 },
+  { rank:42, name:"Freddie Freeman",       team:"LAD", pos:"1B",    pts:529.0, vbd:44.5  },
+  { rank:43, name:"Shea Langeliers",       team:"ATH", pos:"C",     pts:418.5, vbd:41.5  },
+  { rank:44, name:"Pete Fairbanks",        team:"MIA", pos:"RP",    pts:337.0, vbd:41.5  },
+  { rank:45, name:"Ryan Helsley",          team:"BAL", pos:"RP",    pts:335.5, vbd:40.0  },
+  { rank:46, name:"Francisco Lindor",      team:"NYM", pos:"SS",    pts:520.5, vbd:39.0  },
+  { rank:47, name:"Riley Greene",          team:"DET", pos:"OF",    pts:487.0, vbd:39.0  },
+  { rank:48, name:"Matt Olson",            team:"ATL", pos:"1B",    pts:523.5, vbd:39.0  },
+  { rank:49, name:"Emilio Pagán",          team:"CIN", pos:"RP",    pts:333.5, vbd:38.0  },
+  { rank:50, name:"Dennis Santana",        team:"PIT", pos:"RP",    pts:331.5, vbd:36.0  },
+  { rank:51, name:"Jazz Chisholm Jr.",     team:"NYY", pos:"2B,3B", pts:473.5, vbd:35.0  },
+  { rank:52, name:"Nico Hoerner",          team:"CHC", pos:"2B",    pts:473.0, vbd:34.5  },
+  { rank:53, name:"Nick Kurtz",            team:"ATH", pos:"1B",    pts:517.5, vbd:33.0  },
+  { rank:54, name:"Adley Rutschman",       team:"BAL", pos:"C",     pts:406.0, vbd:29.0  },
+  { rank:55, name:"Taylor Ward",           team:"BAL", pos:"OF",    pts:476.0, vbd:28.0  },
+  { rank:56, name:"Randy Arozarena",       team:"SEA", pos:"OF",    pts:473.5, vbd:25.5  },
+  { rank:57, name:"Dylan Cease",           team:"TOR", pos:"SP",    pts:310.5, vbd:24.5  },
+  { rank:58, name:"Steven Kwan",           team:"CLE", pos:"OF",    pts:471.0, vbd:23.0  },
+  { rank:59, name:"Jackson Merrill",       team:"SDP", pos:"OF",    pts:470.0, vbd:22.0  },
+  { rank:60, name:"Cole Ragans",           team:"KCR", pos:"SP",    pts:308.0, vbd:22.0  },
+  { rank:61, name:"Framber Valdez",        team:"DET", pos:"SP",    pts:306.5, vbd:20.5  },
+  { rank:62, name:"Eugenio Suárez",        team:"CIN", pos:"3B",    pts:458.5, vbd:20.0  },
+  { rank:63, name:"Jacob deGrom",          team:"TEX", pos:"SP",    pts:305.0, vbd:19.0  },
+  { rank:64, name:"Jesús Luzardo",         team:"PHI", pos:"SP",    pts:305.0, vbd:19.0  },
+  { rank:65, name:"Abner Uribe",           team:"MIL", pos:"RP",    pts:313.5, vbd:18.0  },
+  { rank:66, name:"Ian Happ",              team:"CHC", pos:"OF",    pts:464.5, vbd:16.5  },
+  { rank:67, name:"Josh Naylor",           team:"SEA", pos:"1B",    pts:500.0, vbd:15.5  },
+  { rank:68, name:"Gleyber Torres",        team:"DET", pos:"2B",    pts:453.5, vbd:15.0  },
+  { rank:69, name:"Jose Altuve",           team:"HOU", pos:"2B,OF", pts:452.5, vbd:14.0  },
+  { rank:70, name:"Trea Turner",           team:"PHI", pos:"SS",    pts:494.5, vbd:13.0  },
+  { rank:71, name:"Sonny Gray",            team:"BOS", pos:"SP",    pts:298.5, vbd:12.5  },
+  { rank:72, name:"Seiya Suzuki",          team:"CHC", pos:"OF",    pts:459.0, vbd:11.0  },
+  { rank:73, name:"Vinnie Pasquantino",    team:"KCR", pos:"1B",    pts:495.5, vbd:11.0  },
+  { rank:74, name:"George Kirby",          team:"SEA", pos:"SP",    pts:295.0, vbd:9.0   },
+  { rank:75, name:"Roman Anthony",         team:"BOS", pos:"OF",    pts:456.5, vbd:8.5   },
+  { rank:76, name:"Marcus Semien",         team:"NYM", pos:"2B",    pts:446.0, vbd:7.5   },
+  { rank:77, name:"Brice Turang",          team:"MIL", pos:"2B",    pts:445.0, vbd:6.5   },
+  { rank:78, name:"Logan Gilbert",         team:"SEA", pos:"SP",    pts:291.5, vbd:5.5   },
+  { rank:79, name:"Ozzie Albies",          team:"ATL", pos:"2B",    pts:443.0, vbd:4.5   },
+  { rank:80, name:"Christian Yelich",      team:"MIL", pos:"OF",    pts:452.0, vbd:4.0   },
+  { rank:81, name:"Jo Adell",              team:"LAA", pos:"OF",    pts:451.0, vbd:3.0   },
+  { rank:82, name:"Andy Pages",            team:"LAD", pos:"OF",    pts:450.5, vbd:2.5   },
+  { rank:83, name:"Zack Wheeler",          team:"PHI", pos:"SP",    pts:287.5, vbd:1.5   },
+  { rank:84, name:"Kevin Gausman",         team:"TOR", pos:"SP",    pts:286.5, vbd:0.5   },
+  { rank:85, name:"Bo Bichette",           team:"NYM", pos:"SS",    pts:481.5, vbd:0.0   },
+  { rank:86, name:"Byron Buxton",          team:"MIN", pos:"OF",    pts:448.0, vbd:0.0   },
+  { rank:87, name:"Will Smith",            team:"LAD", pos:"C",     pts:377.0, vbd:0.0   },
+  { rank:88, name:"Yandy Díaz",            team:"TBR", pos:"1B",    pts:484.5, vbd:0.0   },
+  { rank:89, name:"Joe Ryan",              team:"MIN", pos:"SP",    pts:286.0, vbd:0.0   },
+  { rank:90, name:"Ernie Clement",         team:"TOR", pos:"1B,2B,3B,SS", pts:438.5, vbd:0.0 },
+  { rank:91, name:"Robert Garcia",         team:"TEX", pos:"RP",    pts:295.5, vbd:0.0   },
+  { rank:92, name:"Ceddanne Rafaela",      team:"BOS", pos:"2B,OF", pts:438.0, vbd:-0.5  },
+  { rank:93, name:"Alec Burleson",         team:"STL", pos:"1B,OF", pts:447.5, vbd:-0.5  },
+  { rank:94, name:"Yoshinobu Yamamoto",    team:"LAD", pos:"SP",    pts:284.5, vbd:-1.5  },
+  { rank:95, name:"Kenley Jansen",         team:"DET", pos:"RP",    pts:294.0, vbd:-1.5  },
+  { rank:96, name:"Teoscar Hernández",     team:"LAD", pos:"OF",    pts:445.5, vbd:-2.5  },
+  { rank:97, name:"Willy Adames",          team:"SFG", pos:"SS",    pts:478.5, vbd:-3.0  },
+  { rank:98, name:"Bryson Stott",          team:"PHI", pos:"2B,SS", pts:435.5, vbd:-3.0  },
+  { rank:99, name:"Nick Pivetta",          team:"SDP", pos:"SP",    pts:282.0, vbd:-4.0  },
+  { rank:100,name:"Spencer Strider",       team:"ATL", pos:"SP",    pts:280.5, vbd:-5.5  },
+];
+
+const posClassMap = {
+  'SP':'sp','RP':'rp','OF':'of','C':'c','SS':'ss','2B':'b2','3B':'b3','1B':'b1','DH':'dh'
+};
+
+function getPosTags(posStr) {
+  return posStr.split(',').map(p => {
+    const cls = posClassMap[p.trim()] || '';
+    return `<span class="pos-tag ${cls}">${p.trim()}</span>`;
+  }).join(' ');
+}
+
+function getVBDClass(v) {
+  if (v >= 100) return 'vbd-high';
+  if (v >= 40)  return 'vbd-med';
+  return 'vbd-low';
+}
+
+let currentFilter = 'ALL';
+let currentSearch = '';
+let sortCol = 'rank';
+let sortDir = 1; // 1 = asc, -1 = desc
+
+function renderTable() {
+  const tbody = document.getElementById('playerBody');
+  let rows = '';
+  let lastTier = null;
+
+  const sorted = [...players].sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+    if (av < bv) return -sortDir;
+    if (av > bv) return  sortDir;
+    return 0;
+  });
+
+  sorted.forEach(p => {
+    const posMatch = currentFilter === 'ALL' || p.pos.includes(currentFilter);
+    const searchMatch = !currentSearch || p.name.toLowerCase().includes(currentSearch.toLowerCase()) || p.team.toLowerCase().includes(currentSearch.toLowerCase()) || p.pos.toLowerCase().includes(currentSearch.toLowerCase());
+    const visible = posMatch && searchMatch;
+
+    // tier divider (only when sorted by rank)
+    if (sortCol === 'rank' && sortDir === 1 && visible) {
+      let tier = null;
+      if (p.vbd >= 100) tier = 'TIER 1 — ELITE';
+      else if (p.vbd >= 50) tier = 'TIER 2 — PREMIUM';
+      else if (p.vbd >= 10) tier = 'TIER 3 — SOLID';
+      else tier = 'TIER 4 — DEPTH';
+      if (tier !== lastTier) {
+        rows += `<tr class="tier-divider"><td colspan="6">${tier}</td></tr>`;
+        lastTier = tier;
+      }
+    }
+
+    const targetClass = p.target ? 'target-row' : '';
+    rows += `<tr class="${targetClass}${visible ? '' : ' hidden'}" data-pos="${p.pos}" data-name="${p.name}">
+      <td class="rank-num">${p.rank}</td>
+      <td>
+        <div class="p-name">${p.name}${p.target ? '<span class="tier-badge tier-s" style="margin-left:8px">TARGET</span>' : ''}</div>
+      </td>
+      <td>${getPosTags(p.pos)}</td>
+      <td class="p-team">${p.team}</td>
+      <td class="vbd-cell ${getVBDClass(p.vbd)}">${p.vbd >= 0 ? '+' : ''}${p.vbd.toFixed(1)}</td>
+      <td class="pts-cell">${p.pts.toFixed(1)}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = rows;
+}
+
+function filterPos(pos) {
+  currentFilter = pos;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable();
+}
+
+function searchPlayers(val) {
+  currentSearch = val;
+  renderTable();
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = col === 'name' ? 1 : -1; }
+  document.querySelectorAll('.sort-icon').forEach(i => {
+    i.classList.remove('active');
+    i.textContent = '↕';
+  });
+  const icon = document.getElementById('sort-' + col);
+  if (icon) { icon.classList.add('active'); icon.textContent = sortDir > 0 ? '▲' : '▼'; }
+  renderTable();
+}
+
+renderTable();
+</script>
+</body>
+</html>

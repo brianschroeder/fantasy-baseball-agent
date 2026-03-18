@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.env
+oauth2.json
+# SQLite WAL/journal files (transient, never commit)
+data/*.db-shm
+data/*.db-wal
+# Keep the main database — it's the core data source
+# data/*.db  <-- intentionally not ignored
+
+# Claude Code local/machine-specific settings
+.claude/settings.local.json
+
+# Playwright MCP browser logs
+.playwright-mcp/
+.venv/
+venv/
+*.egg
+.eggs/

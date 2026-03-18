@@ -2,7 +2,11 @@
   "mcpServers": {
     "fantasy-baseball": {
       "command": "python",
-      "args": ["-m", "mcp_server.server"],
+      "args": [
+        "-m",
+        "mcp_server.server"
+      ],
+      "cwd": "C:\\Users\\brian\\OneDrive\\Desktop\\Code\\Personal\\fantasy-baseball-agent"
+    }
 }
-  }
 }

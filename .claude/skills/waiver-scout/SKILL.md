@@ -51,80 +51,121 @@ Focus on:
 
 ---
 
-## Step 3 — Web Research
+## Step 3 — Pitching Week Analysis
 
-Do targeted web searches to find what's trending. Run these searches:
+Before web research, audit your current pitching situation for the week using `get_my_team_live`.
 
-1. Search: `fantasy baseball waiver wire adds [current week/date]`
-2. Search: `fantasy baseball hot players this week [current date]`
-3. Search: `fantasy baseball injury news today [current date]`
-4. Search: `fantasy baseball streaming pitchers this week`
-5. If any of your current rostered players are injured or cold: search their name + "fantasy baseball"
+**For every SP and RP on your roster, identify:**
+- How many starts do they have this week? (1-start vs 2-start is a huge difference)
+- Which days are they starting?
+- Any injury flags or recent struggles worth dropping for?
+
+**Two-start math**: A 2-start SP who goes 6 IP, 7K, 1 ER each outing scores:
+`(2 × QS +6) + (2 × 6 IP × +1) + (2 × 7 K × +1) + (2 × -1 ER) = 12 + 12 + 14 - 2 = **36 pts**`
+vs a 1-start SP who only gets half that. Two-start pitchers are must-starts and must-adds.
+
+**Determine your SP slot availability:**
+- How many SP slots do you have filled vs open this week?
+- Are any of your rostered SP only making 1 start this week? → candidate to swap for a 2-start streamer
+- Is anyone on your pitching staff in a bad matchup? → candidate to bench/drop for a better option
+
+---
+
+## Step 4 — Web Research
+
+Do targeted web searches. Run these searches:
+
+1. Search: `fantasy baseball two start pitchers week [current week number] [current date]`
+2. Search: `fantasy baseball streaming pitchers two starts this week [current date]`
+3. Search: `fantasy baseball waiver wire adds [current date]`
+4. Search: `fantasy baseball hot players this week [current date]`
+5. Search: `fantasy baseball injury news today [current date]`
+6. Search: `fantasy baseball closer news saves opportunities [current date]`
+7. If any rostered players are injured or cold: search their name + "fantasy baseball"
 
 **What to look for:**
-- Players breaking out (multi-HR games, pitch count increasing, role change)
+- **Two-start pitchers available on waivers** — highest priority pitching add every week
+- Favorable single-start matchups (bad offensive team, home park, high K rate vs opponent)
 - Closers moving into save opportunities (injured closer = his backup is a target)
-- Injury designations that open playing time (starter goes on IL → his backup becomes relevant)
-- SP with favorable upcoming schedule (easy opponents)
+- Injury designations that open playing time (starter IL → his backup becomes relevant)
+- Players breaking out (multi-HR games, pitch count increasing, role change)
 - RP with hold/save opportunities this week
 
 **Cross-reference with your roster**: If a waiver wire player overlaps with your weakest current player at the same position, flag it as an add/drop candidate.
 
 ---
 
-## Step 4 — Generate the Report
+## Step 5 — Generate the Report
 
 Produce a structured morning report. Be direct and opinionated — tell the user exactly what to do, ranked by priority.
 
 ```
 ════════════════════════════════════════════════════════
-  🔬 MORNING WAIVER SCOUT — [DATE]
+  MORNING WAIVER SCOUT — [DATE]
 ════════════════════════════════════════════════════════
 
 ROSTER SNAPSHOT
-Current record: [W-L], [rank] in league
-This week's matchup: vs. [opponent] — [my score] to [their score] (Week X)
-Roster flags: [any IL, injured, or players to watch]
+Record: [W-L], [rank] in league
+This week: vs. [opponent] — [my score] to [their score] (Week X)
+Flags: [any IL, injured, or players to watch]
 
 ────────────────────────────────────────────────────────
-TOP ADDS (Priority Order)
+MY PITCHING THIS WEEK
 ────────────────────────────────────────────────────────
 
-1. ADD [Player Name] ([Pos], [Team]) — DROP [Player to cut]
-   Why: [1-2 sentences: what's driving the move, scoring upside, context from news]
-   Owned: [X]% | Projected impact: [qualitative: high/medium/low]
+2-Start SP:  [Name] vs [OPP] ([day]), vs [OPP] ([day]) ← priority starts
+1-Start SP:  [Name] vs [OPP] ([day])
+             [Name] vs [OPP] ([day])
+No start:    [Name] — [reason: off week / skip start]
+RP:          [Name] — [save/hold opps this week]
 
-2. ADD [Player Name] ([Pos], [Team]) — DROP [Player to cut]
-   Why: [...]
-   Owned: [X]% | Projected impact: [...]
-
-3. [Continue for top 3-5 moves]
+Projected pitching pts this week: ~[estimate based on starts × avg output]
+Open SP slots: [X of Y filled]
 
 ────────────────────────────────────────────────────────
 STREAMING PITCHERS THIS WEEK
 ────────────────────────────────────────────────────────
 
-[If you have open SP/RP slots or weak current starters:]
-Stream: [SP Name] ([Team]) — starts vs. [opponent] [day]
-   Why: [favorable matchup, recent form, K upside]
+[Ranked by value — 2-start streamers always listed first]
 
-Stream: [SP Name] ([Team]) — starts vs. [opponent] [day]
+⭐ 2-START: [SP Name] ([Team], [X]% owned)
+   Starts: vs [OPP] [day] + vs [OPP] [day]
+   Why: [matchup quality, K rate, recent form — cite scoring math]
+   ADD for: [who to drop or bench]
+
+   [SP Name] ([Team], [X]% owned)
+   Starts: vs [OPP] [day] + vs [OPP] [day]
    Why: [...]
+   ADD for: [...]
+
+1-START: [SP Name] ([Team], [X]% owned)
+   Starts: vs [OPP] [day]
+   Why: [only recommend if matchup is excellent or you have open slots]
+   ADD for: [...]
+
+────────────────────────────────────────────────────────
+TOP ADDS (Non-Pitching, Priority Order)
+────────────────────────────────────────────────────────
+
+1. ADD [Player Name] ([Pos], [Team]) — DROP [Player to cut]
+   Why: [scoring-specific reason — cite actual point values]
+   Owned: [X]% | Impact: [High/Medium/Low]
+
+[2-5 same format]
 
 ────────────────────────────────────────────────────────
 HOLD / MONITOR
 ────────────────────────────────────────────────────────
 
-[Players to watch but not act on yet]
 - [Player]: [why watching — role uncertainty, coming back from IL, etc.]
 
 ────────────────────────────────────────────────────────
 MATCHUP STRATEGY
 ────────────────────────────────────────────────────────
 
-[Brief 2-3 sentence strategy for winning this week's matchup based on
-the scoring breakdown, your opponent's roster if knowable, and
-any streaming or roster moves that tilt points in your favor]
+[2-3 sentences: how to win this week given your pitching slate, opponent's
+roster, and any streaming moves. Call out if you're thin on starts and
+need to add a streamer to compete on the pitching side.]
 
 ════════════════════════════════════════════════════════
 ```
@@ -136,10 +177,12 @@ any streaming or roster moves that tilt points in your favor]
 When ranking adds, weight them by scoring impact:
 
 **Pitchers:**
-- Closer with 8+ saves potential = top priority (SV +8 is the most efficient event)
-- SP who racks up QS + K + IP (each QS = 6 pts, each K = 1 pt, each IP = 1 pt)
+- **2-start SP on waivers = #1 priority** — two starts doubles every counting stat. A mediocre SP with 2 starts often outscores an ace with 1 start.
+- Closer with save opps = elite add (SV +8 is the single most valuable pitching event)
+- SP who racks up QS + K + IP (QS +6, each K +1, each IP +1 — workhorses accumulate fast)
 - Setup man with 5+ holds/week potential (HLD +4 each)
-- Avoid SP who walk a lot (BB -0.5) or give up earned runs (ER -1.0)
+- Avoid SP in bad matchups (strong offensive team, hitter's park) — ER -1.0 and L -4.0 hurt
+- Always note start count and opponent quality for every pitcher recommendation
 
 **Batters:**
 - Power hitters (HR +4 + R +1 + RBI +1.5 = ~6.5 pts per HR)
@@ -154,7 +197,7 @@ When ranking adds, weight them by scoring impact:
 
 ---
 
-## Step 5 — Send to Telegram
+## Step 6 — Send to Telegram
 
 After the report is generated, send it to the Fantasy Baseball Telegram chat using the `send_message` tool from the `telegram` MCP server.
 

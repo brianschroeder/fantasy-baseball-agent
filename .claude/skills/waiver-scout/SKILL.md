@@ -214,10 +214,10 @@ When ranking adds, weight them by scoring impact:
 
 After the report is generated, send it to the Fantasy Baseball Telegram chat using the `send_message` tool from the `telegram` MCP server.
 
-- **Chat ID**: Use the `FANTASY_BASEBALL_CHAT_ID` (check with `list_chats` if you don't have it, look for "⚾ Fantasy Baseball Scout")
+- **Chat ID**: `-1003719015869` (⚾ Fantasy Baseball Scout channel)
 - **Format**: Send as plain text — the report format already has clear visual structure
 - **Split long messages**: If the report is very long, send the Roster Snapshot + Top Adds as one message and Streaming/Hold/Strategy as a second
-- Call: `send_message(chat_id=CHAT_ID, message=report_text)`
+- Call: `send_message(chat_id=-1003719015869, message=report_text)`
 
 ---
 

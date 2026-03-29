@@ -154,6 +154,17 @@ When ranking adds, weight them by scoring impact:
 
 ---
 
+## Step 5 — Send to Telegram
+
+After the report is generated, send it to the Fantasy Baseball Telegram chat using the `send_message` tool from the `telegram` MCP server.
+
+- **Chat ID**: Use the `FANTASY_BASEBALL_CHAT_ID` (check with `list_chats` if you don't have it, look for "⚾ Fantasy Baseball Scout")
+- **Format**: Send as plain text — the report format already has clear visual structure
+- **Split long messages**: If the report is very long, send the Roster Snapshot + Top Adds as one message and Streaming/Hold/Strategy as a second
+- Call: `send_message(chat_id=CHAT_ID, message=report_text)`
+
+---
+
 ## Important Notes
 
 - **Be specific** — "Add Player X, drop Player Y" not "consider adding..."
@@ -162,3 +173,4 @@ When ranking adds, weight them by scoring impact:
 - **Check injury status** from your web research — don't recommend an injured player
 - Use real ownership percentages from `get_free_agents_live` when ranking
 - If you find conflicting info between web research and Yahoo data, note it
+- Always send the final report to Telegram — that's the delivery mechanism

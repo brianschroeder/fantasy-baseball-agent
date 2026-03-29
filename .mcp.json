@@ -3,6 +3,15 @@
     "fantasy-baseball": {
       "command": "python",
       "args": ["-m", "mcp_server.server"]
-}
+    },
+    "telegram": {
+      "command": "/opt/homebrew/bin/uv",
+      "args": [
+        "--directory",
+        "/Users/brian/Desktop/Code/mcp/telegram-mcp",
+        "run",
+        "main.py"
+      ]
+    }
   }
 }

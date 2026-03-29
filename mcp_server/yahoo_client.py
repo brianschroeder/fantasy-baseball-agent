@@ -1,14 +1,53 @@
 from yahoo_oauth import OAuth2
 import yahoo_fantasy_api as yfa
 import json
+import os
 
 
 LEAGUE_KEY = "469.l.3508"
 TEAM_KEY = "469.l.3508.t.9"
 
 
+def _ensure_oauth_file(path: str) -> None:
+    """Write oauth2.json from env vars if the file is missing or empty.
+
+    Environment variables used (all required if file is absent):
+        YAHOO_CONSUMER_KEY, YAHOO_CONSUMER_SECRET,
+        YAHOO_ACCESS_TOKEN, YAHOO_REFRESH_TOKEN
+    Optional:
+        YAHOO_GUID, YAHOO_TOKEN_TIME
+    """
+    if os.path.exists(path) and os.path.getsize(path) > 0:
+        return  # file already present — nothing to do
+
+    required_vars = {
+        "consumer_key": "YAHOO_CONSUMER_KEY",
+        "consumer_secret": "YAHOO_CONSUMER_SECRET",
+        "access_token": "YAHOO_ACCESS_TOKEN",
+        "refresh_token": "YAHOO_REFRESH_TOKEN",
+    }
+    missing = [env for env in required_vars.values() if not os.environ.get(env)]
+    if missing:
+        raise RuntimeError(
+            f"oauth2.json not found and missing env vars: {missing}"
+        )
+
+    data = {
+        "consumer_key": os.environ["YAHOO_CONSUMER_KEY"],
+        "consumer_secret": os.environ["YAHOO_CONSUMER_SECRET"],
+        "access_token": os.environ["YAHOO_ACCESS_TOKEN"],
+        "refresh_token": os.environ["YAHOO_REFRESH_TOKEN"],
+        "guid": os.environ.get("YAHOO_GUID", ""),
+        "token_time": float(os.environ.get("YAHOO_TOKEN_TIME", "0")),
+        "token_type": "bearer",
+    }
+    with open(path, "w") as fh:
+        json.dump(data, fh)
+
+
 class YahooClient:
     def __init__(self, oauth_file="oauth2.json"):
+        _ensure_oauth_file(oauth_file)
         self.oauth = OAuth2(None, None, from_file=oauth_file)
         self.game = yfa.Game(self.oauth, "mlb")
         self._league = None

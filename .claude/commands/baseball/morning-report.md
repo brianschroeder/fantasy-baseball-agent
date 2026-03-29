@@ -1,0 +1,1 @@
+Run the morning waiver wire scout and generate today's fantasy baseball recommendations report. Pull live roster data, check league standings and current matchup, scan the waiver wire, and research player news and trending adds via web search. Output a prioritized add/drop recommendation report optimized for this H2H Points league's scoring.

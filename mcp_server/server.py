@@ -556,6 +556,209 @@ def get_rankings(source: str = "fantasypros", position: str = None) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# In-season / Waiver Wire tools
+# ═══════════════════════════════════════════════════════════════════════
+
+
+@mcp.tool()
+def get_my_team_live() -> str:
+    """Get current in-season roster from Yahoo Fantasy (live, not draft state).
+
+    Shows the actual players currently on your team including their slot,
+    injury status, and position eligibility.
+    """
+    if yahoo is None:
+        return "Yahoo client not available. Ensure oauth2.json is present."
+
+    try:
+        roster = yahoo.get_roster()
+    except Exception as exc:
+        return f"Error fetching roster: {exc}"
+
+    if not roster:
+        return "No roster data returned from Yahoo."
+
+    lines = ["My Current Roster (Live):", ""]
+    lines.append(f"{'Slot':<8} {'Name':<25} {'Team':<5} {'Eligible':<15} {'Status'}")
+    lines.append("-" * 70)
+
+    for player in roster:
+        name = player.get("name", "Unknown")
+        slot = player.get("selected_position", "?")
+        team = player.get("editorial_team_abbr") or player.get("team", "?")
+        eligible = player.get("display_position") or player.get("eligible_positions", "?")
+        if isinstance(eligible, list):
+            eligible = ",".join(str(e) for e in eligible)
+        status = player.get("status", "") or ""
+
+        lines.append(f"{str(slot):<8} {name:<25} {str(team):<5} {str(eligible):<15} {status}")
+
+    lines.append(f"\nTotal: {len(roster)} players")
+    return "\n".join(lines)
+
+
+@mcp.tool()
+def get_free_agents_live(position: str = "ALL", count: int = 30) -> str:
+    """Get top free agents currently available on the waiver wire.
+
+    Args:
+        position: Filter by position (C, 1B, 2B, SS, 3B, OF, SP, RP, ALL).
+        count: Number of players to return (default 30).
+    """
+    if yahoo is None:
+        return "Yahoo client not available. Ensure oauth2.json is present."
+
+    try:
+        free_agents = yahoo.get_free_agents(position)
+    except Exception as exc:
+        return f"Error fetching free agents: {exc}"
+
+    if not free_agents:
+        return f"No free agents found" + (f" at {position}" if position != "ALL" else "") + "."
+
+    # Sort by ownership % descending (most owned = most desirable)
+    def _pct(p):
+        val = p.get("percent_owned") or p.get("percent_started") or 0
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return 0.0
+
+    free_agents = sorted(free_agents, key=_pct, reverse=True)[:count]
+
+    header = f"Top Free Agents"
+    if position != "ALL":
+        header += f" ({position})"
+
+    lines = [header, ""]
+    lines.append(
+        f"{'#':>3}  {'Name':<25} {'Team':<5} {'Pos':<12} {'Own%':>6} {'Started%':>9} {'Status'}"
+    )
+    lines.append("-" * 75)
+
+    for i, p in enumerate(free_agents, 1):
+        name = p.get("name", "Unknown")
+        team = p.get("editorial_team_abbr") or p.get("team", "?")
+        pos = p.get("display_position") or p.get("eligible_positions", "?")
+        if isinstance(pos, list):
+            pos = ",".join(str(x) for x in pos)
+        own_pct = p.get("percent_owned", "-")
+        started_pct = p.get("percent_started", "-")
+        status = p.get("status", "") or ""
+
+        lines.append(
+            f"{i:>3}  {name:<25} {str(team):<5} {str(pos):<12} "
+            f"{str(own_pct):>6} {str(started_pct):>9} {status}"
+        )
+
+    return "\n".join(lines)
+
+
+@mcp.tool()
+def get_current_matchup() -> str:
+    """Get the current week's H2H matchup score and status for my team."""
+    if yahoo is None:
+        return "Yahoo client not available. Ensure oauth2.json is present."
+
+    try:
+        matchups = yahoo.get_matchups()
+    except Exception as exc:
+        return f"Error fetching matchups: {exc}"
+
+    if not matchups:
+        return "No matchup data returned from Yahoo."
+
+    my_team_key = "469.l.3508.t.9"
+    lines = ["Current Matchup:", ""]
+
+    # matchups is a list of matchup objects; find the one with our team
+    my_matchup = None
+    for m in matchups:
+        teams = m.get("teams") or {}
+        for tk, td in teams.items():
+            if isinstance(td, dict):
+                key = td.get("team_key", "")
+                if key == my_team_key or my_team_key in str(key):
+                    my_matchup = m
+                    break
+        if my_matchup:
+            break
+
+    if my_matchup is None:
+        # Fallback: show all matchups raw
+        lines.append("(Could not isolate my matchup — showing all)")
+        lines.append("")
+        for i, m in enumerate(matchups, 1):
+            lines.append(f"Matchup {i}: {m}")
+        return "\n".join(lines)
+
+    # Parse matchup
+    week = my_matchup.get("week", "?")
+    lines.append(f"Week {week}")
+    lines.append("")
+
+    teams = my_matchup.get("teams") or {}
+    for _tk, td in teams.items():
+        if not isinstance(td, dict):
+            continue
+        team_name = td.get("name", "Unknown")
+        team_pts = td.get("team_points", {})
+        total = team_pts.get("total", "?") if isinstance(team_pts, dict) else "?"
+        is_mine = my_team_key in str(td.get("team_key", ""))
+        marker = " ← MY TEAM" if is_mine else ""
+        lines.append(f"  {team_name:<30} {total} pts{marker}")
+
+    is_over = my_matchup.get("is_over", False)
+    winner = my_matchup.get("winner_team_key", "")
+    if is_over:
+        lines.append("")
+        lines.append(f"Result: {'WIN' if my_team_key in str(winner) else 'LOSS'}")
+    else:
+        lines.append("")
+        lines.append("Status: In progress")
+
+    return "\n".join(lines)
+
+
+@mcp.tool()
+def get_standings() -> str:
+    """Get current league standings with win/loss records and points totals."""
+    if yahoo is None:
+        return "Yahoo client not available. Ensure oauth2.json is present."
+
+    try:
+        standings = yahoo.get_standings()
+    except Exception as exc:
+        return f"Error fetching standings: {exc}"
+
+    if not standings:
+        return "No standings data returned from Yahoo."
+
+    my_team_key = "469.l.3508.t.9"
+    lines = ["League Standings:", ""]
+    lines.append(f"{'Rank':<5} {'Team':<30} {'W':>3} {'L':>3} {'T':>3} {'Pts For':>9} {'Pts Agst':>9}")
+    lines.append("-" * 65)
+
+    for i, team in enumerate(standings, 1):
+        name = team.get("name", "Unknown")
+        team_key = team.get("team_key", "")
+        outcome = team.get("outcome_totals", {})
+        wins = outcome.get("wins", "?") if isinstance(outcome, dict) else "?"
+        losses = outcome.get("losses", "?") if isinstance(outcome, dict) else "?"
+        ties = outcome.get("ties", "?") if isinstance(outcome, dict) else "?"
+        pts_for = team.get("points_for", "?")
+        pts_against = team.get("points_against", "?")
+        marker = " ◄" if my_team_key in str(team_key) else ""
+
+        lines.append(
+            f"{i:<5} {name:<30} {str(wins):>3} {str(losses):>3} {str(ties):>3} "
+            f"{str(pts_for):>9} {str(pts_against):>9}{marker}"
+        )
+
+    return "\n".join(lines)
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # Entry point
 # ═══════════════════════════════════════════════════════════════════════
 

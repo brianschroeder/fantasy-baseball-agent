@@ -56,18 +56,25 @@ Focus on:
 Before web research, audit your current pitching situation for the week using `get_my_team_live`.
 
 **For every SP and RP on your roster, identify:**
-- How many starts do they have this week? (1-start vs 2-start is a huge difference)
-- Which days are they starting?
-- Any injury flags or recent struggles worth dropping for?
-
-**Two-start math**: A 2-start SP who goes 6 IP, 7K, 1 ER each outing scores:
-`(2 × QS +6) + (2 × 6 IP × +1) + (2 × 7 K × +1) + (2 × -1 ER) = 12 + 12 + 14 - 2 = **36 pts**`
-vs a 1-start SP who only gets half that. Two-start pitchers are must-starts and must-adds.
+- How many starts do they have this week? (1 vs 2 matters for volume)
+- Which days and vs. which opponents?
+- Matchup quality — are they facing a weak offense, at home, in a pitcher's park?
+- Any injury flags or recent struggles worth dropping?
 
 **Determine your SP slot availability:**
-- How many SP slots do you have filled vs open this week?
-- Are any of your rostered SP only making 1 start this week? → candidate to swap for a 2-start streamer
-- Is anyone on your pitching staff in a bad matchup? → candidate to bench/drop for a better option
+- How many SP slots are filled vs open this week?
+- Are any rostered SP in terrible matchups or making 0 starts? → candidates to replace with a streamer
+- Are there open SP slots to fill with a quality arm?
+
+**Streamer evaluation framework** — score each candidate on all three factors:
+
+| Factor | What to check |
+|--------|--------------|
+| **Pitcher quality** | Recent ERA/WHIP trend, K rate, pitch count (is he stretched out?), stuff rating |
+| **Matchup** | Opponent's team batting average, K rate, park factors — weak offense + pitcher's park = ideal |
+| **Starts** | 2 starts doubles volume, but a bad 2-start can hurt more than help (2 × ER -1, BB -0.5, L -4) |
+
+**The right call on 2-start pitchers**: Two starts amplify everything — good and bad. A solid pitcher (3.50 ERA, 9 K/9) with 2 starts is excellent. A shaky pitcher (4.80 ERA, high walk rate) with 2 starts against tough lineups may cost you points. Always check both the start count AND the matchup quality together.
 
 ---
 
@@ -75,21 +82,26 @@ vs a 1-start SP who only gets half that. Two-start pitchers are must-starts and 
 
 Do targeted web searches. Run these searches:
 
-1. Search: `fantasy baseball two start pitchers week [current week number] [current date]`
-2. Search: `fantasy baseball streaming pitchers two starts this week [current date]`
+1. Search: `best fantasy baseball streaming pitchers this week [current date]`
+2. Search: `fantasy baseball two start pitchers week [current week number] [current date]`
 3. Search: `fantasy baseball waiver wire adds [current date]`
 4. Search: `fantasy baseball hot players this week [current date]`
 5. Search: `fantasy baseball injury news today [current date]`
-6. Search: `fantasy baseball closer news saves opportunities [current date]`
+6. Search: `fantasy baseball closer saves opportunities [current date]`
 7. If any rostered players are injured or cold: search their name + "fantasy baseball"
 
-**What to look for:**
-- **Two-start pitchers available on waivers** — highest priority pitching add every week
-- Favorable single-start matchups (bad offensive team, home park, high K rate vs opponent)
-- Closers moving into save opportunities (injured closer = his backup is a target)
-- Injury designations that open playing time (starter IL → his backup becomes relevant)
-- Players breaking out (multi-HR games, pitch count increasing, role change)
-- RP with hold/save opportunities this week
+**For streaming pitchers, look for:**
+- Strong matchup indicators: opponent's team K%, low slugging, pitcher's park, road team disadvantage
+- Pitcher form: recent starts (last 2-3 outings), K rate, ability to get deep into games (QS upside)
+- Two-start bonus: if a quality streamer also has 2 starts, that's ideal — but don't add a bad pitcher just for the extra start
+- Pitch count/workload: is the pitcher being stretched out after IL return or debut? Skip those
+- K upside: high-strikeout pitchers score more in this league (K +1.0 each) — prioritize arms with 8+ K/9
+
+**For all other adds, look for:**
+- Closers moving into save opportunities (SV +8 each — any closer job change is urgent)
+- Injury designations that open playing time
+- Players breaking out (power surge, new lineup spot, role change)
+- RP with hold/save opportunities this week (HLD +4 each)
 
 **Cross-reference with your roster**: If a waiver wire player overlaps with your weakest current player at the same position, flag it as an add/drop candidate.
 
@@ -126,22 +138,22 @@ Open SP slots: [X of Y filled]
 STREAMING PITCHERS THIS WEEK
 ────────────────────────────────────────────────────────
 
-[Ranked by value — 2-start streamers always listed first]
+[Ranked by overall streaming value: pitcher quality × matchup × starts.
+A great 1-start can rank above a shaky 2-start. Show start count clearly
+but don't default-rank 2-start above a superior single-start arm.]
 
-⭐ 2-START: [SP Name] ([Team], [X]% owned)
-   Starts: vs [OPP] [day] + vs [OPP] [day]
-   Why: [matchup quality, K rate, recent form — cite scoring math]
+#1 STREAM: [SP Name] ([Team], [X]% owned) — [1 or 2 starts]
+   Starts: vs [OPP] [day] (+ vs [OPP] [day] if 2-start)
+   Matchup: [opponent K%, park, home/away — why this is favorable]
+   Pitcher: [recent form, ERA last 3 starts, K rate]
+   Scoring upside: ~[X] pts ([math: est IP × +1 + est K × +1 + QS +6 if likely - est ER × -1])
    ADD for: [who to drop or bench]
 
-   [SP Name] ([Team], [X]% owned)
-   Starts: vs [OPP] [day] + vs [OPP] [day]
-   Why: [...]
-   ADD for: [...]
+#2 STREAM: [same format]
 
-1-START: [SP Name] ([Team], [X]% owned)
-   Starts: vs [OPP] [day]
-   Why: [only recommend if matchup is excellent or you have open slots]
-   ADD for: [...]
+#3 STREAM: [same format]
+
+[Note if any are 2-start — flag it as a bonus, not the primary reason to add]
 
 ────────────────────────────────────────────────────────
 TOP ADDS (Non-Pitching, Priority Order)
@@ -177,12 +189,13 @@ need to add a streamer to compete on the pitching side.]
 When ranking adds, weight them by scoring impact:
 
 **Pitchers:**
-- **2-start SP on waivers = #1 priority** — two starts doubles every counting stat. A mediocre SP with 2 starts often outscores an ace with 1 start.
-- Closer with save opps = elite add (SV +8 is the single most valuable pitching event)
-- SP who racks up QS + K + IP (QS +6, each K +1, each IP +1 — workhorses accumulate fast)
-- Setup man with 5+ holds/week potential (HLD +4 each)
-- Avoid SP in bad matchups (strong offensive team, hitter's park) — ER -1.0 and L -4.0 hurt
-- Always note start count and opponent quality for every pitcher recommendation
+- **Best available streamer = pitcher quality × matchup × start count** — evaluate all three together, don't auto-rank by starts alone
+- A dominant 1-start pitcher vs a weak lineup often outscores a mediocre 2-start arm; 2 starts amplify both good and bad outings
+- Closer with save opps = elite add regardless (SV +8 is the most efficient single event in this scoring)
+- Target high-K pitchers: K +1.0 each adds up fast — 9 K/9 guys score well even in average matchups
+- QS upside matters: QS +6 is the biggest pitching score outside saves — target pitchers who regularly go 6+ IP
+- Avoid: SP facing strong offenses in hitter's parks with high walk rates (BB -0.5 + ER -1.0 + L -4.0 can crater a week)
+- Always show: start count, opponents, estimated scoring upside, and recent form for every pitcher recommendation
 
 **Batters:**
 - Power hitters (HR +4 + R +1 + RBI +1.5 = ~6.5 pts per HR)
